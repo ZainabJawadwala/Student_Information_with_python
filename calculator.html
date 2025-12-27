@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app calculator">
+        <h1>Calculator</h1>
+        <input id="screen" type="text" class="calculator-screen" value="0" readonly aria-label="Calculator display" aria-live="polite" role="textbox">
+        <table>
+            <tr>
+                <td><button class="btn operator" data-value="C" aria-label="clear">C</button></td>
+                <td><button class="btn operator" data-value="sign" aria-label="toggle sign">+/-</button></td>
+                <td><button class="btn operator" data-value="%" aria-label="percent">%</button></td>
+                <td><button class="btn operator" data-value="/" aria-label="divide">/</button></td>
+            </tr>
+            <tr>
+                <td><button class="btn" data-value="7" aria-label="7">7</button></td>
+                <td><button class="btn" data-value="8" aria-label="8">8</button></td>
+                <td><button class="btn" data-value="9" aria-label="9">9</button></td>
+                <td><button class="btn operator" data-value="*" aria-label="multiply">*</button></td>
+            </tr>
+            <tr>
+                <td><button class="btn" data-value="4" aria-label="4">4</button></td>
+                <td><button class="btn" data-value="5" aria-label="5">5</button></td>
+                <td><button class="btn" data-value="6" aria-label="6">6</button></td>
+                <td><button class="btn operator" data-value="-" aria-label="subtract">-</button></td>
+            </tr>
+            <tr>
+                <td><button class="btn" data-value="1" aria-label="1">1</button></td>
+                <td><button class="btn" data-value="2" aria-label="2">2</button></td>
+                <td><button class="btn" data-value="3" aria-label="3">3</button></td>
+                <td><button class="btn operator" data-value="+" aria-label="add">+</button></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button class="btn large" data-value="0" aria-label="0">0</button></td>
+                <td><button class="btn" data-value="." aria-label="decimal">.</button></td>
+                <td><button class="btn operator" data-value="=" aria-label="equals">=</button></td>
+            </tr>
+        </table>
+    </div>
+
+        <script>
+        (function(){
+            const screen = document.getElementById('screen');
+            if (!screen) return;
+
+            function sanitizeExpression(expr){
+                return expr.replace(/[^0-9+\-*/().% ]/g,'');
+            }
+
+            function evalExpression(expr){
+                try{
+                    const normalized = expr.replace(/(\d+(?:\.\d+)?)%/g, '($1/100)');
+                    return Function('return ' + normalized)();
+                }catch(e){
+                    return 'Error';
+                }
+            }
+
+            function clear(){ screen.value = '0'; }
+
+            function toggleSign(){
+                if (screen.value === '0') return;
+                screen.value = screen.value.startsWith('-') ? screen.value.slice(1) : '-' + screen.value;
+            }
+
+            function inputValue(val){
+                const last = screen.value.slice(-1);
+                const ops = ['+','-','*','/'];
+                if (val === 'C') return clear();
+                if (val === 'sign') return toggleSign();
+                if (val === '='){
+                    const expr = sanitizeExpression(screen.value);
+                    screen.value = String(evalExpression(expr));
+                    return;
+                }
+                if (ops.includes(val)){
+                    if (ops.includes(last)){
+                        screen.value = screen.value.slice(0,-1) + val;
+                    } else {
+                        screen.value += val;
+                    }
+                    return;
+                }
+                if (screen.value === '0' && val !== '.'){
+                    screen.value = val;
+                } else {
+                    screen.value += val;
+                }
+            }
+
+            // attach click handlers
+            document.querySelectorAll('.btn').forEach(btn=>{
+                btn.addEventListener('click', ()=>{
+                    const v = btn.dataset.value;
+                    inputValue(v);
+                });
+                // tactile feedback
+                btn.addEventListener('mousedown', ()=> btn.classList.add('pressed'));
+                btn.addEventListener('mouseup', ()=> btn.classList.remove('pressed'));
+                btn.addEventListener('mouseleave', ()=> btn.classList.remove('pressed'));
+                btn.addEventListener('touchstart', ()=> btn.classList.add('pressed'));
+                btn.addEventListener('touchend', ()=> btn.classList.remove('pressed'));
+            });
+
+            // keyboard support
+            document.addEventListener('keydown', (e)=>{
+                const key = e.key;
+                if (/^[0-9]$/.test(key)) return inputValue(key);
+                if (key === 'Enter' || key === '=') return inputValue('=');
+                if (key === 'Escape') return inputValue('C');
+                if (key === 'Backspace'){
+                    // delete last char
+                    if (screen.value.length <= 1) { screen.value = '0'; }
+                    else { screen.value = screen.value.slice(0,-1); }
+                    return;
+                }
+                if (key === '.') return inputValue('.');
+                if (['+','-','*','/','%'].includes(key)) return inputValue(key);
+            });
+        })();
+        </script>
+</body>
+</html>
