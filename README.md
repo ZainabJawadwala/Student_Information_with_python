@@ -1,11 +1,11 @@
 ### Smart Student Assistant (Python) ###
 
- # Overview
+ Overview
 This project is a Python-based console application designed to help students manage their basic academic activities. It includes features such as profile management, attendance tracking, marks calculation, and a to-do list.
 
 
 
- # Features
+ Features
 - Create and save student profile (name and roll number)
 - View saved student profile
 - Calculate attendance percentage
@@ -14,12 +14,12 @@ This project is a Python-based console application designed to help students man
 - Menu-driven interface for easy navigation
 
 
- # Technologies Used
+ Technologies Used
 - Python
 - File Handling (Text Files)
 
 
-# How It Works
+ How It Works
 The program runs in a loop and displays a menu with the following options:
 
 1. View Profile  
@@ -29,4 +29,4 @@ The program runs in a loop and displays a menu with the following options:
 5. View To-Do Tasks  
 6. Exit  
 
-Users can select an option to perform the required operation...
+Users can select an option to perform the required operation.
