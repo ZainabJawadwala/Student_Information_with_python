@@ -1,4 +1,4 @@
-### Smart Student Assistant (Python) ###
+### Smart Student Assistant (Python) 
 
  Overview
 This project is a Python-based console application designed to help students manage their basic academic activities. It includes features such as profile management, attendance tracking, marks calculation, and a to-do list.
